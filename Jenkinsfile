@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -13,15 +12,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
+                echo 'Creating Python virtual environment...'
+                sh 'python3 -m venv .venv'
+
                 echo 'Installing Python dependencies...'
-                sh 'python3 -m pip install --user -r requirements.txt'
+                sh '.venv/bin/python -m pip install -r requirements.txt'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Preparing Flask application...'
-                sh 'python3 -m py_compile app.py test_app.py'
+                echo 'Checking Flask application syntax...'
+                sh '.venv/bin/python -m py_compile app.py test_app.py'
+
                 echo 'Build completed successfully!'
             }
         }
@@ -29,13 +32,13 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running automated unit tests...'
-                sh 'python3 -m unittest -v test_app.py'
+                sh '.venv/bin/python -m unittest -v test_app.py'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying Task Manager application...'
+                echo 'Preparing deployment package...'
 
                 sh '''
                     mkdir -p deployment
@@ -43,7 +46,7 @@ pipeline {
                     cp -r templates static deployment/
                 '''
 
-                echo 'Application deployment package created!'
+                echo 'Deployment package created successfully!'
             }
         }
     }
