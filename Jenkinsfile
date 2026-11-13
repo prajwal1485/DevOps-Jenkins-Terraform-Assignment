@@ -53,7 +53,7 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD Pipeline completed successfully!'
+            echo 'CI/CD Pipeline Implemented Successfully!'
         }
 
         failure {
